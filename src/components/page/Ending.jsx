@@ -54,7 +54,7 @@ function Ending() {
     }
 
     return (
-        <div className="flex flex-col justify-center items-center gap-3 translate-y-[-4rem]">
+        <div className="flex flex-col justify-center items-center gap-3 translate-y-[-4rem] z-30">
             <motion.div
                 initial={{ y: -40, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}

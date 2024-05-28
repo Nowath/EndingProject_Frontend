@@ -19,7 +19,7 @@ function Home() {
         };
     }, []);
     return (
-        <div className="">
+        <div className=" z-30">
             <motion.div
                 initial={{ scale: 0.5 }}
                 animate={{ scale: 1 }}
