@@ -5,10 +5,12 @@ import { useNavigate } from "react-router-dom";
 import { FaTrashRestore } from "react-icons/fa";
 import MorseCode from "../MorseCode";
 import { supabase } from "../../createClient";
+import axios from "axios";
 
 function Main() {
     const [phone, setPhone] = useState("");
-    const [counter, setCounter] = useState(0);
+    let [counter, setCounter] = useState(0);
+    const [newCount, setNewCount] = useState(0);
     const [error, setError] = useState(
         "Phone number must be at least 10 digits."
     );
@@ -30,6 +32,17 @@ function Main() {
         };
 
         fetchData();
+    }, []);
+    useEffect(() => {
+        const ws = new WebSocket("ws://localhost:3000");
+        ws.onmessage = (event) => {
+            let num = parseInt(event.data);
+            setCounter(num);
+            setNewCount((counter += num));
+        };
+        return () => {
+            ws.close();
+        };
     }, []);
 
     useEffect(() => {
@@ -61,7 +74,7 @@ function Main() {
         try {
             const { data, error } = await supabase
                 .from("database")
-                .insert([{ phone: phoneMorseCode, point: counter }])
+                .insert([{ phone: phoneMorseCode, point: newCount }])
                 .select();
             if (error) throw error;
             console.log("User created:", data);
@@ -74,7 +87,7 @@ function Main() {
         try {
             const { data, error } = await supabase.rpc("increment", {
                 col_name: "point",
-                increment_value: counter,
+                increment_value: newCount,
                 phone_morse: phoneMorseCode,
             });
             if (error) throw error;
@@ -140,7 +153,7 @@ function Main() {
                         <h2 className="text-2xl">ใส่ขยะของคุณ</h2>
                     </div>
                     <h1 className="text-2xl">Counter</h1>
-                    <h1 className="text-[4rem]">{counter}</h1>
+                    <h1 className="text-[4rem]">{newCount}</h1>
                 </motion.div>
             </div>
             <footer className="h-40"></footer>
